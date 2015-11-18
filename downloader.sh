@@ -48,5 +48,6 @@ do
 	convert *.jpg ../chap$chapno.pdf
 	echo "Cleaning up....."
 	cd ..
+	gnome-open chap$chapno.pdf
 	rm -rf $chap
 done
