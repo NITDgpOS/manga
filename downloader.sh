@@ -13,6 +13,14 @@ for chap in $(seq $chaps $chape);
 do
 	mkdir $chap
 	cd $chap
+	wget -O index.html -o log.txt www.mangareader.net/$manga/$chap
+	if grep -q "not released yet" index.html; then
+		echo "Chapter $chap of $manga is not released yet"
+		cd ..
+		rm -rf $chap
+		break
+	fi
+	rm index.html
 	for i in {1..100}
 	do
 		echo "Downloading page $i of chapter $chap....."
