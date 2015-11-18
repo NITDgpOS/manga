@@ -1,5 +1,7 @@
 echo "Enter Manga name:"
 read manga
+manga=${manga,,} # Converting it to lower case
+manga=${manga// /-} # Removing spaces and adding - in their places
 echo "Enter the chapter range."
 echo "Start:"
 read chaps
