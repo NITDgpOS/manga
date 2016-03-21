@@ -26,8 +26,8 @@ do
 	for i in {1..100}
 	do
 		echo "Downloading page $i of chapter $chap....."
-		wget -o log.txt -O $i.html -c www.mangareader.net/$manga/$chap/$i
-		grep 'src=\"http' $i.html | grep 'mangareader' > jump.txt
+		wget -o log.txt -O $i.html -c www.mangapanda.com/$manga/$chap/$i
+		grep 'src=\"http' $i.html | grep 'mangapanda' > jump.txt
 		link=$(head -n 1 jump.txt)
 		starti="$(echo $link | grep -aob '"' | grep -oE '[0-9]+' | sed "11q;d")"
 		endi="$(echo $link | grep -aob '"' | grep -oE '[0-9]+' | sed "12q;d")"
