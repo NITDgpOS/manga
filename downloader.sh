@@ -9,7 +9,9 @@ echo "End:"
 read chape
 echo $manga >> .gitignore
 sort -u -o .gitignore .gitignore
-mkdir $manga
+if [ ! -d "$manga" ]; then
+	mkdir $manga
+fi
 cd $manga
 for chap in $(seq $chaps $chape);
 do
@@ -26,11 +28,12 @@ do
 	for i in {1..100}
 	do
 		echo "Downloading page $i of chapter $chap....."
-		wget -o log.txt -O $i.html -c www.mangapanda.com/$manga/$chap/$i
-		grep 'src=\"http' $i.html | grep 'mangapanda' > jump.txt
+		wget -o log.txt -O $i.html -c www.mangapanda.com/$manga/$chap/$i # Downloads the main webpage
+		grep 'src=\"http' $i.html | grep 'mangapanda' > jump.txt # Gets the list of image links
 		link=$(head -n 1 jump.txt)
 		starti="$(echo $link | grep -aob '"' | grep -oE '[0-9]+' | sed "11q;d")"
 		endi="$(echo $link | grep -aob '"' | grep -oE '[0-9]+' | sed "12q;d")"
+		# Workaround for two page images, which are displayed as large images.
 		if grep -q "Larger Image" $i.html; then
 			starti="$(echo $link | grep -aob '"' | grep -oE '[0-9]+' | sed "9q;d")"
 			endi="$(echo $link | grep -aob '"' | grep -oE '[0-9]+' | sed "10q;d")"
