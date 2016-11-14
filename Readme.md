@@ -16,13 +16,9 @@ All are bash commands, `bash <filename>` to run the particular script.
  * `page.sh`
   * Opens the main page in chrome browser.
 
-Things to work on
-=================
+Things you can work on
+======================
 
-Feel free to contribute to the script. Here are a few things you can work on:
+Feel free to contribute to the script.
 
-* Adding install script to add the execution in /usr/bin
-* Adding options like:
-  * `-o` to specify if the file should open after download or not
-  * `-m [manga name] -c [chapter start] [chapter end]` for single line execution
-  * `-h [host]` to switch between manga hosts used
+You can check out the things you can contribute to at: https://github.com/NIT-dgp/manga/issues
