@@ -60,6 +60,8 @@ do
 	path=$(pwd)
 	echo -e "Your downloaded file is in this path:\n" $path
 	cd ..
-	gnome-open chap$chapno.pdf
+	if [ "$1" = "-o" ]; then
+		gnome-open chap$chapno.pdf
+	fi
 	rm -rf $chap
 done
