@@ -19,7 +19,7 @@ do
 	cd $chap
 	wget -O index.html -o log.txt www.mangareader.net/$manga/$chap
 	if grep -q "not released yet" index.html; then
-		echo "Chapter $chap of $manga is not released yet"
+		echo "Chapter $chap of $manga  is not available at www.mangareader.net"
 		cd ..
 		rm -rf $chap
 		break
