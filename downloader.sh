@@ -52,6 +52,8 @@ do
 	chapno=${chapno: -4}
 	convert *.jpg ../chap$chapno.pdf
 	echo "Cleaning up....."
+	path=$(pwd)
+	echo -e "Your downloaded file is in this path:\n" $path
 	cd ..
 	gnome-open chap$chapno.pdf
 	rm -rf $chap
