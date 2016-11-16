@@ -7,8 +7,11 @@ echo "Start:"
 read chaps
 echo "End:"
 read chape
-echo $manga >> .gitignore
-sort -u -o .gitignore .gitignore
+if [ ! -d "Downloads" ]; then
+	mkdir Downloads
+fi
+cd Downloads
+
 if [ ! -d "$manga" ]; then
 	mkdir $manga
 fi
@@ -19,13 +22,14 @@ do
 	cd $chap
 	wget -O index.html -o log.txt www.mangareader.net/$manga/$chap
 	if grep -q "not released yet" index.html; then
-		echo "Chapter $chap of $manga is not released yet"
+		echo "Chapter $chap of $manga  is not available at www.mangareader.net"
 		cd ..
 		rm -rf $chap
 		break
 	fi
 	rm index.html
-	for i in {1..100}
+	declare -i i=1
+	while true  #an infinte while loop 
 	do
 		echo "Downloading page $i of chapter $chap....."
 		wget -o log.txt -O $i.html -c www.mangapanda.com/$manga/$chap/$i # Downloads the main webpage
@@ -46,6 +50,7 @@ do
 		fi
 		imagename=0000$i
 		wget -O ${imagename: -4}.jpg -o log.txt -c $image
+		i=i+1
 	done
 	echo "Converting to pdf..."
 	chapno=0000$chap
