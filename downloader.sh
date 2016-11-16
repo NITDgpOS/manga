@@ -7,8 +7,11 @@ echo "Start:"
 read chaps
 echo "End:"
 read chape
-echo $manga >> .gitignore
-sort -u -o .gitignore .gitignore
+if [ ! -d "Downloads" ]; then
+	mkdir Downloads
+fi
+cd Downloads
+
 if [ ! -d "$manga" ]; then
 	mkdir $manga
 fi
