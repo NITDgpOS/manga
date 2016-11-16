@@ -25,7 +25,8 @@ do
 		break
 	fi
 	rm index.html
-	for i in {1..100}
+	declare -i i=1
+	while true  #an infinte while loop 
 	do
 		echo "Downloading page $i of chapter $chap....."
 		wget -o log.txt -O $i.html -c www.mangapanda.com/$manga/$chap/$i # Downloads the main webpage
@@ -46,6 +47,7 @@ do
 		fi
 		imagename=0000$i
 		wget -O ${imagename: -4}.jpg -o log.txt -c $image
+		i=i+1
 	done
 	echo "Converting to pdf..."
 	chapno=0000$chap
