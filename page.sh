@@ -2,16 +2,13 @@
 
 wget -O index.html www.mangareader.net
 
-#Open the index page on Firefox or Chrome as per user choice
-echo -e "Open using\n(1)Chrome\n(2)Firefox\n"
-echo -e "Enter choice:(1/2)"
-read num
-if [ $num == 1 ]
-	then 	
-		google-chrome-stable index.html
-elif [ $num == 2 ]
-	then 
-		firefox index.html
+<<<<<<< HEAD
+#Open the index page on Google Chrome or Firefox according to the users choice
+
+if [ "$1" = "-f" ]; then
+	firefox index.html
 else
-	echo "invalid choice"
+	google-chrome-stable index.html
 fi
+
+>>>>>>> 626fae9fcb1ff62d142bdca52de7bb678f97b006
