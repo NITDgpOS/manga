@@ -1,12 +1,37 @@
-echo "Enter Manga name:"
-read manga
+
+a="$#"
+for (( i=1; i<=a; i++))
+do
+	if [ "${!i}" = "-t" ]; then
+		m=$i
+	fi
+	if [ "${!i}" = "-chap" ]; then
+		c=$i
+		d1=$((c+1))
+		d2=$((c+2))
+	fi
+done
+if [ $m -lt $c ];
+	then
+		for (( i=m+1; i<c; i++))
+		do
+			manga+="${!i}";
+			manga+="-";
+		done	
+else
+	for (( i=m+1; i<=a; i++))
+	do
+		manga+="${!i}";
+		manga+="-";
+	done
+fi
+declare -i chaps=0
+declare -i chape=0
+chaps="${!d1}"
+chape="${!d2}"
 manga=${manga,,} # Converting it to lower case
-manga=${manga// /-} # Removing spaces and adding - in their places
-echo "Enter the chapter range."
-echo "Start:"
-read chaps
-echo "End:"
-read chape
+manga=${manga::-1} # Removing spaces and adding - in their places
+
 if [ ! -d "Downloads" ]; then
 	mkdir Downloads
 fi
