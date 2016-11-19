@@ -1,12 +1,68 @@
-echo "Enter Manga name:"
-read manga
-manga=${manga,,} # Converting it to lower case
-manga=${manga// /-} # Removing spaces and adding - in their places
-echo "Enter the chapter range."
-echo "Start:"
-read chaps
-echo "End:"
-read chape
+a="$#"
+declare -i m=0,c=0
+#checking for existence of -t , -chap in argument
+for (( i=1; i<=a; i++))
+do
+	if [ "${!i}" = "-t" ]; then
+		m=$i
+	fi
+	if [ "${!i}" = "-chap" ]; then
+		c=$i
+		d1=$((c+1))
+		d2=$((c+2))
+	fi
+done
+
+chaps="${!d1}"
+chape="${!d2}"
+
+if [ "$m" -ne 0 -a "$c" -ne 0 ]; then #both title and chap are present
+
+	if [ "$m" -lt "$c" ]; then
+		for (( i=m+1; i<c; i++))
+		do
+				manga+="${!i}";
+				manga+="-";
+		done	
+	else
+		for (( i=m+1; i<=a; i++))
+		do
+			manga+="${!i}";
+			manga+="-";
+		done
+	fi
+	manga=${manga::-1} #removing terminal '-'
+
+elif [ "$m" -eq 0 -a "$c" -ne 0 ]; then #only chap range is present
+	echo "Enter Manga name:"
+	read manga	
+	manga=${manga,,} # Converting it to lower case
+	manga=${manga// /-}
+elif [ "$m" -ne 0 -a "$c" -eq 0 ]; then #only manga name is present
+	echo "Enter the chapter range."
+	echo "Start:"
+	read chaps
+	echo "End:"
+	read chape
+	#getting manga name
+	for (( i=m+1; i<=a; i++))
+		do
+				manga+="${!i}";
+				manga+="-";
+		done
+	manga=${manga::-1} #removing terminal '-'
+else							   #no argument is present
+	echo "Enter Manga name:"
+	read manga
+	manga=${manga,,} # Converting it to lower case
+	manga=${manga// /-} #removing spaces, adding '-'
+	echo "Enter the chapter range."
+	echo "Start:"
+	read chaps
+	echo "End:"
+	read chape
+fi
+
 if [ ! -d "Downloads" ]; then
 	mkdir Downloads
 fi
