@@ -1,15 +1,18 @@
+#!/usr/bin/env python
+
 from bs4 import BeautifulSoup
 import requests
+import sys
 
 #makes soup, that is basically parsing the html document
-def make_soup(url):
+def make_soup (url) :
     response = requests.get(url)
     html = response.text    #Converts the response into text
     return BeautifulSoup(html, "lxml")  #Parses the html with lxml parser
 
 
 #scrape status from /<manga-name>
-def get_status(manga_name,url):
+def get_status (manga_name, url) :
     soup = make_soup(url) 
     rows = soup.select("#chapterlist tr")       #this makes a list of bs4 element tags  
     row_nos = len(rows)       #Total number of chapters
@@ -17,20 +20,38 @@ def get_status(manga_name,url):
     if row_nos > 1 :    #When minimum of 1 chapter is present
         last_chap = rows[row_nos-1]   #Taking the latest release
         data = last_chap.select("td")
-        result = data[0].get_text()+" released on "+data[1].get_text()+" (MM/DD/YYYY)"
-        result = result.strip()     #remove extra whitespaces from the start and end of the string
+        chap_name = data[0].get_text().strip()  #strip extra whitespaces from the start and end of the string
+        chap_date = data[1].get_text().strip()
+        result = chap_name.ljust(80) + chap_date
         print result
     
     else :
         print "No releases for "+manga_name.strip()+" found !"
     
-if __name__ == "__main__":
-    with open('.fav') as f:     
-        mangas = f.readlines()      #Make a list of favourite mangas
-    for manga in mangas:    #Iterating each favourite manga
-        manga_name = manga
-        manga = manga.strip() #Remove extra whitespaces from the start and end of the string
-        manga = manga.lower() #Change the manga name into lowercase
-        manga = manga.replace(' ','-')    #Replace the whitespaces with a hyphen (-)
-        url = "http://www.mangareader.net/"+manga
-        get_status(manga_name,url)
+if __name__ == "__main__" :
+    if '-f' in sys.argv :
+        try :
+            print "Fetching the status of your favourite mangas...\n"
+            with open('.fav') as f :     
+                mangas = f.readlines()      #Make a list of favourite mangas
+            f.close()   #closes the file
+            result_format = "Title with latest chapter".ljust(80) + "Date of release (MM/DD/YYYY)\n"
+            print result_format
+            for manga in mangas :    #Iterating each favourite manga
+                manga_name = manga
+                manga = manga.strip() #Remove extra whitespaces from the start and end of the string
+                manga = manga.lower() #Change the manga name into lowercase
+                manga = manga.replace(' ','-')    #Replace the whitespaces with a hyphen (-)
+                url = "http://www.mangareader.net/"+manga
+                get_status (manga_name,url)
+        except :
+            print "No favourites added yet !"
+            
+    else :
+        soup = make_soup("http://www.mangareader.net") 
+        mangas = soup.select ('.chaptersrec')   #this makes a list of bs4 element tags
+        for i in range(0,len(mangas)) :
+            print mangas[i].get_text()
+        
+        
+            
