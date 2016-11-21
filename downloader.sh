@@ -1,6 +1,13 @@
 a="$#"
+
 declare -i chaps=0,chape=0,t=0,c=0,end_loop=0,d1=0,d2=0
 #checking for existence of -t , --chap in argument
+function()
+{
+local link=$1
+local start_end="$(echo $link | grep -aob '"' | grep -oE '[0-9]+' | sed "q;d")"
+echo $start_end
+}
 for (( i=1; i<=a; i++))
 do
 	if [ "${!i}" = "--title" ] || [ "${!i}" = "-t" ]; then
@@ -68,12 +75,16 @@ do
 		wget -o log.txt -O $i.html -c www.mangapanda.com/$manga/$chap/$i # Downloads the main webpage
 		grep 'src=\"http' $i.html | grep 'mangapanda' > jump.txt # Gets the list of image links
 		link=$(head -n 1 jump.txt)
-		starti="$(echo $link | grep -aob '"' | grep -oE '[0-9]+' | sed "11q;d")"
-		endi="$(echo $link | grep -aob '"' | grep -oE '[0-9]+' | sed "12q;d")"
+		starti=$(function link)
+		endi=$(function link)
+		#starti="$(echo $link | grep -aob '"' | grep -oE '[0-9]+' | sed "11q;d")"
+		#endi="$(echo $link | grep -aob '"' | grep -oE '[0-9]+' | sed "12q;d")"
 		# Workaround for two page images, which are displayed as large images.
 		if grep -q "Larger Image" $i.html; then
-			starti="$(echo $link | grep -aob '"' | grep -oE '[0-9]+' | sed "9q;d")"
-			endi="$(echo $link | grep -aob '"' | grep -oE '[0-9]+' | sed "10q;d")"
+			#starti="$(echo $link | grep -aob '"' | grep -oE '[0-9]+' | sed "9q;d")"
+			starti=$(function link)
+			endi=$(function link)
+			#endi="$(echo $link | grep -aob '"' | grep -oE '[0-9]+' | sed "10q;d")"
 		fi
 		length=$((endi-starti))
 		image=${link:$((starti+1)):$((length-1))}
