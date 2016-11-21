@@ -5,8 +5,8 @@ declare -i chaps=0,chape=0,t=0,c=0,end_loop=0,d1=0,d2=0
 function()
 {
 	local link=$1
-	local stream=$2
-	local start_end="$(echo $link | grep -aob '"' | grep -oE '[0-9]+' | sed "stream;d")"
+	local str=$2
+	local start_end="$(echo $link | grep -aob '"' | grep -oE '[0-9]+' | sed "str;d")"
 	echo $start_end
 }
 for (( i=1; i<=a; i++))
