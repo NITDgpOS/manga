@@ -1,6 +1,6 @@
 #Gets the index page of mangareader.net
 
-wget -O index.html www.mangareader.net
+wget -q -O index.html www.mangareader.net
 
 #Open the index page on Google Chrome or Firefox according to the users choice
 
