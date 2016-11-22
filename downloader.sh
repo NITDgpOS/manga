@@ -65,8 +65,8 @@ do
 	while true  #an infinte while loop 
 	do
 		echo "Downloading page $i of chapter $chap....."
-		wget -o log.txt -O $i.html -c www.mangapanda.com/$manga/$chap/$i # Downloads the main webpage
-		grep 'src=\"http' $i.html | grep 'mangapanda' > jump.txt # Gets the list of image links
+		wget -o log.txt -O $i.html -c www.mangareader.net/$manga/$chap/$i # Downloads the main webpage
+		grep 'src=\"http' $i.html | grep 'mangareader' > jump.txt # Gets the list of image links
 		link=$(head -n 1 jump.txt)
 		starti="$(echo $link | grep -aob '"' | grep -oE '[0-9]+' | sed "11q;d")"
 		endi="$(echo $link | grep -aob '"' | grep -oE '[0-9]+' | sed "12q;d")"
