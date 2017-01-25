@@ -5,8 +5,7 @@ import sys
 
 # Gets the index page of mangareader.net
 
-os.system("wget -O index.html -o log.txt www.mangareader.net")
-os.remove("log.txt")
+os.system("wget -O index.html -o /dev/null www.mangareader.net")
 
 # Open the index page on Google Chrome or Firefox according to the users choice
 
