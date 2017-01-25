@@ -4,9 +4,24 @@ import requests
 from bs4 import BeautifulSoup
 import os
 import shutil
+import pathlib
+
+
+def cd(dir):
+    """
+    Intelligently change directory
+    """
+    if not os.path.exists(dir):  # check for an existing path
+        os.mkdir(path)  # make directory if it doesn't exist
+    elif not pathlib.Path(dir).is_dir():  # else check for a clashing filename
+        print("Error: A file already exists with '" + dir + "' filename")
+    os.chdir(dir)
 
 
 def get_html(url):
+    """
+    Gets html text for the given url
+    """
     response = requests.get(url)
     return response.text  # Converts the response into text and return it
 
@@ -23,25 +38,18 @@ if __name__ == "__main__":
     chape = input("End : ")
     dest = "Downloads"
 
-    if not os.path.exists(dest):  # Checks if Downloads folder exists or not
-        os.mkdir(dest)
-    os.chdir(dest)
-
-    if not os.path.exists(manga):  # Checks if Manga folder exists or not
-        os.mkdir(manga)
-    os.chdir(manga)
+    cd(dest)
+    cd(manga)
 
     for chap in range(chaps, chape + 1):
-        if not os.path.exists(str(chap)):  # Checks if the folder exists
-            os.mkdir(str(chap))
-        os.chdir(str(chap))
+        cd(str(chap))
         url = "http://www.mangareader.net/" + manga + "/" + str(chap)
         html = get_html(url)  # HTML page of the url
 
         if "not released yet" in html:  # Checks for this string
             print("Chapter " + str(chap) + " of " + manga +
                   " is not available at www.mangareader.net")
-            os.chdir("..")  # Goes one directory ahead
+            os.chdir("..")  # Goes to the previous directory
             shutil.rmtree(str(chap))
             break
 
