@@ -1,0 +1,10 @@
+[Default]
+bears = SpaceConsistencyBear
+files = *.py
+use_spaces = True
+
+[Python]
+bears = PEP8Bear, PyUnusedCodeBear
+files = *.py
+default_actions =
+        PEP8Bear: ApplyPatchAction
