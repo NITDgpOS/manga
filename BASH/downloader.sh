@@ -12,6 +12,10 @@ do
 	if [ "${!i}" = "--chap" ] || [ "${!i}" = "-c" ]; then
 		c=$i
 	fi
+        if [ "${!i}" = "-fo" ]; then
+		x=$i
+        fi
+      
 done
 if [ "$t" -ne 0 ]; then	
 	if [ "$c" -gt "$t" ]; then
@@ -96,6 +100,10 @@ do
 	path=$(pwd)
 	echo -e "Your downloaded file is in this path:\n" $path
 	cd ..
-	gnome-open chap$chapno.pdf
-	rm -rf $chap
+        if [ "$x" != "" ]; then
+        nautilus $path
+	else
+	gnome-open chap$chapno.pdf	
+ 	rm -rf $chap
+        fi
 done
