@@ -33,14 +33,13 @@ def check(manga):
 
 
 if __name__ == "__main__":
-    manga = input(
-        "Enter the name of the manga to add to the favourites : ")
+    manga_fav_msg = "Enter the name of the manga to add to the favourites : "
+    manga = input(manga_fav_msg)
     check(manga)  # Check the validity of the manga
     while True:
         choice = input("Do you want to add more?[Y/N] ")
         if choice == 'Y' or choice == 'y':
-            manga = input(
-                "Enter the name of the manga to add to the favourites : ")
+            manga = input(manga_fav_msg)
             check(manga)
         elif choice == 'N' or choice == 'n':
             break
