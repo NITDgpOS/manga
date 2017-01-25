@@ -13,8 +13,10 @@ def make_soup(url):
     return BeautifulSoup(html, "lxml")  # Parses the html with lxml parser
 
 
-# scrape status from /<manga-name>
 def get_status(manga_name, url):
+    """
+    scrape status from /<manga-name>
+    """
     soup = make_soup(url)
     # this makes a list of bs4 element tags
     rows = soup.select("#chapterlist tr")
