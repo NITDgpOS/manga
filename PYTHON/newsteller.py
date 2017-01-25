@@ -13,8 +13,10 @@ def make_soup(url):
     return BeautifulSoup(html, "lxml")  # Parses the html with lxml parser
 
 
-# scrape status from /<manga-name>
 def get_status(manga_name, url):
+    """
+    scrape status from /<manga-name>
+    """
     soup = make_soup(url)
     # this makes a list of bs4 element tags
     rows = soup.select("#chapterlist tr")
@@ -30,7 +32,7 @@ def get_status(manga_name, url):
         print(result)
 
     else:
-        print("No releases for " + manga_name.strip() + " found !")
+        print("No releases for " + manga_name + " found !")
 
 
 if __name__ == "__main__":
@@ -44,8 +46,7 @@ if __name__ == "__main__":
                 80) + "Date of release (MM/DD/YYYY)\n"
             print(result_format)
             for manga in mangas:  # Iterating each favourite manga
-                manga_name = manga
-                manga = manga.strip()  # Remove unnecessary whitespaces
+                manga_name = manga = manga.strip()
                 manga = manga.lower()  # Change the manga name into lowercase
                 # Replace the whitespaces with a hyphen (-)
                 manga = manga.replace(' ', '-')
