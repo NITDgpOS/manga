@@ -1,6 +1,20 @@
-index(){
+index() {
 	echo "$(echo $@ | grep -aob '"' | grep -oE '[0-9]+' | sed "${!#};d")"
 }
+
+issuesPage="https://github.com/NIT-dgp/manga/issues/new"
+
+os=$(uname)
+if [ "$os" = "Linux" -o "$os" = "FreeBSD" ]; then
+	openWith="$(which xdg-open 2> /dev/null)"
+elif [ "$os" = "Darwin" ]; then
+	openWith="$(which open 2> /dev/null)"
+else
+	echo "Platform '$os' not listed"
+	echo "PDF will not be automatically opened for you"
+	echo "Please raise an issue on $issuesPage"
+fi
+
 a="$#"
 declare -i chaps=0,chape=0,t=0,c=0,end_loop=0,d1=0,d2=0
 #checking for existence of -t , --chap in argument
@@ -12,10 +26,9 @@ do
 	if [ "${!i}" = "--chap" ] || [ "${!i}" = "-c" ]; then
 		c=$i
 	fi
-        if [ "${!i}" = "-fo" ]; then
+	if [ "${!i}" = "-fo" ]; then
 		x=$i
-        fi
-      
+	fi
 done
 if [ "$t" -ne 0 ]; then
 	if [ "$c" -gt "$t" ]; then
@@ -71,7 +84,7 @@ do
 	fi
 	rm index.html
 	declare -i i=1
-	while true  #an infinte while loop
+	while true  #an infinite while loop
 	do
 		echo "Downloading page $i of chapter $chap....."
 		wget -q -O $i.html -c www.mangareader.net/$manga/$chap/$i # Downloads the main webpage
@@ -102,10 +115,12 @@ do
 	path=$(pwd)
 	echo -e "Your downloaded file is in this path:\n" $path
 	cd ..
-        if [ "$x" != "" ]; then
-        nautilus $path
+	if [ "$x" != "" ]; then
+		nautilus $path
 	else
-	gnome-open chap$chapno.pdf	
- 	rm -rf $chap
-        fi
+		if [ -n "$openWith" ]; then
+			$openWith chap$chapno.pdf
+		fi
+		rm -rf $chap
+	fi
 done
