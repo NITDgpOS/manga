@@ -13,7 +13,7 @@ do
 		c=$i
 	fi
 done
-if [ "$t" -ne 0 ]; then	
+if [ "$t" -ne 0 ]; then
 	if [ "$c" -gt "$t" ]; then
 		end_loop=c-1
 	else
@@ -23,7 +23,7 @@ if [ "$t" -ne 0 ]; then
 	do
 		manga+="${!i}";
 		manga+="-";
-	done	
+	done
 	manga=${manga::-1} #removing terminal '-'
 else
 	echo "Enter Manga name:"
@@ -65,7 +65,7 @@ do
 	fi
 	rm index.html
 	declare -i i=1
-	while true  #an infinte while loop 
+	while true  #an infinte while loop
 	do
 		echo "Downloading page $i of chapter $chap....."
 		wget -o log.txt -O $i.html -c www.mangareader.net/$manga/$chap/$i # Downloads the main webpage
