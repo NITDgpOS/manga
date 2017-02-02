@@ -44,6 +44,8 @@ else
 	read chape
 fi
 
+cd ..
+
 if [ ! -d "Downloads" ]; then
 	mkdir Downloads
 fi
