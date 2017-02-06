@@ -1,4 +1,4 @@
-#define PORTABLE
+//#define PORTABLE
 
 #ifndef PORTABLE
 #include <sys/types.h>
@@ -12,6 +12,12 @@
 #include <malloc.h>
 #include <string.h>
 
+#include "lib.h"
+
+#define SWAP(a, b, type)  {                     \
+        type c = a;                             \
+        a = b, b = c;                           \
+    }
 
 char* get_path(const char *file)
 {
@@ -51,7 +57,7 @@ int get_file_names_in_dir(const char *dir, char ***list)
     char result[4096];
     char cmd[5000];
 
-    sprintf(cmd, "ls -l '%s' | sed '1d' | wc -l", dir);
+    sprintf(cmd, "ls -l '%s' | wc -l", dir);
 
     fp = popen(cmd, "r");
     if (fp == NULL)
@@ -61,7 +67,7 @@ int get_file_names_in_dir(const char *dir, char ***list)
     }
 
     fgets(result, sizeof(result) - 1, fp);
-    files_in_dir = atol(result);
+    files_in_dir = atol(result) - 1;
 
     pclose(fp);
 
@@ -104,7 +110,10 @@ int get_file_names_in_dir(const char *dir, char ***list)
 
     pclose(fp);
 
+    (*list)[i] = NULL;
+
 #else
+
     DIR *mydir;
     struct dirent *myfile;
     mydir = opendir(dir);
@@ -118,9 +127,12 @@ int get_file_names_in_dir(const char *dir, char ***list)
         }
     }
     closedir(mydir);
-#endif
 
     (*list)[i] = NULL;
+
+    sort_file_names(*list);
+
+#endif
 
     return files_in_dir;
 }
@@ -131,4 +143,20 @@ void free_file_list(char ***list)
     while ((*list)[i])
         free((*list)[i++]);
     free(*list);
+}
+
+void sort_file_names(char **file_list)
+{
+    size_t i;
+
+    for (i = 0; file_list[i + 1]; ++i)
+    {
+        size_t j = i;
+        while (strcasecmp(file_list[j + 1], file_list[j]) < 0)
+        {
+            SWAP(file_list[j + 1], file_list[j], char *);
+            if (j-- == 0)
+                break;
+        }
+    }
 }

@@ -7,4 +7,6 @@ char* get_path(const char *file);
 
 void free_file_list(char ***list);
 
+void sort_file_names(char **file_list);
+
 #endif
