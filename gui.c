@@ -26,6 +26,9 @@ enum
 };
 
 
+GtkBuilder *builder;
+
+
 static void manga_tree_selection_changed(GtkTreeSelection *selection,
                                          gpointer data)
 {
@@ -131,13 +134,18 @@ int main(int argc, char **argv)
     GtkWidget *window;
     GtkWidget *view;
     GtkWidget *scrollWindow;
-    GtkWidget *box;
+    GtkWidget *box, *content_box;
     GtkWidget *label;
+    GtkWidget *header;
+    GtkWidget *quit_button;
     GtkTreeSelection *select;
 
     gtk_init(&argc, &argv);
 
-    window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+    builder = gtk_builder_new();
+    gtk_builder_add_from_file(builder, "gui.glade", NULL);
+
+    window = (GtkWidget *)gtk_builder_get_object(builder, "window");
     gtk_window_set_title(GTK_WINDOW(window), TITLE_TEXT);
 
     g_signal_connect(window, "delete_event", gtk_main_quit, NULL);
@@ -168,7 +176,14 @@ int main(int argc, char **argv)
     gtk_widget_set_size_request(scrollWindow, MIN_PDF_WIDTH, MIN_PDF_HEIGHT);
     gtk_box_pack_start(GTK_BOX(box), scrollWindow, TRUE, TRUE, 0);
 
-    gtk_container_add(GTK_CONTAINER(window), box);
+    header = (GtkWidget *)gtk_builder_get_object(builder, "header");
+    quit_button = gtk_button_new_with_label("Quit");
+    g_signal_connect(quit_button, "clicked",
+                     G_CALLBACK(gtk_main_quit), NULL);
+    gtk_header_bar_pack_end(GTK_HEADER_BAR(header), quit_button);
+
+    content_box = (GtkWidget *)gtk_builder_get_object(builder, "content_box");
+    gtk_box_pack_start(GTK_BOX(content_box), box, TRUE, TRUE, 0);
 
     gtk_widget_show_all(window);
 
