@@ -29,21 +29,20 @@ enum
 GtkBuilder *builder;
 
 
-static void manga_tree_selection_changed(GtkTreeSelection *selection,
-                                         gpointer data)
+static void manga_tree_selection_changed(GtkTreeSelection *selection, gpointer data)
 {
-        GtkTreeIter iter;
-        GtkTreeModel *model;
-        gchar *path;
+    GtkTreeIter iter;
+    GtkTreeModel *model;
+    gchar *path;
 
-        if (gtk_tree_selection_get_selected(selection, &model, &iter))
-        {
-                gtk_tree_model_get(model, &iter, MANGA_PATH, &path, -1);
+    if (gtk_tree_selection_get_selected(selection, &model, &iter))
+    {
+        gtk_tree_model_get(model, &iter, MANGA_PATH, &path, -1);
 
-                gtk_label_set_text(GTK_LABEL(data), path);
+        gtk_label_set_text(GTK_LABEL(data), path);
 
-                g_free(path);
-        }
+        g_free(path);
+    }
 }
 
 
@@ -129,6 +128,58 @@ static GtkWidget *create_manga_tree_view()
 }
 
 
+void download_dialog(GtkWidget *wid, gpointer ptr)
+{
+    /*GtkWidget *dialog = gtk_dialog_new_with_buttons("Download Manga", ptr, 0,
+                                                    "_Download", GTK_RESPONSE_ACCEPT,
+                                                    "_Cancel", GTK_RESPONSE_REJECT,
+                                                    NULL);
+    //GtkWidget *download_button = gtk_button_new_with_label("Download");
+
+    //g_signal_connect(cancel_button, "clicked",
+    //                 G_CALLBACK(gtk_widget_destroy), dialog);
+    gtk_widget_show_all(dialog);*/
+
+    GtkWidget *window          = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+    GtkWidget *header          = gtk_header_bar_new();
+    GtkWidget *download_button = gtk_button_new_with_label("Download Manga");
+    GtkWidget *cancel_button   = gtk_button_new_with_label("Cancel");
+    GtkWidget *grid            = gtk_grid_new();
+
+    GtkWidget *manga_name_label = gtk_label_new("Manga name");
+    GtkWidget *manga_name_entry = gtk_entry_new();
+
+    GtkWidget *chap_start_label = gtk_label_new("Starting chapter number");
+    GtkWidget *chap_start_entry = gtk_entry_new();
+
+    GtkWidget *chap_end_label = gtk_label_new("Ending chapter number");
+    GtkWidget *chap_end_entry = gtk_entry_new();
+
+    g_signal_connect_swapped(cancel_button, "clicked",
+                     G_CALLBACK(gtk_widget_destroy), window);
+    gtk_header_bar_pack_start(GTK_HEADER_BAR(header), download_button);
+    gtk_header_bar_pack_end(GTK_HEADER_BAR(header), cancel_button);
+    gtk_window_set_titlebar(GTK_WINDOW(window), header);
+
+    gtk_grid_attach(GTK_GRID(grid), manga_name_label, 0, 0, 1, 1);
+    gtk_grid_attach(GTK_GRID(grid), manga_name_entry, 1, 0, 2, 1);
+
+    gtk_grid_attach(GTK_GRID(grid), chap_start_label, 0, 1, 1, 1);
+    gtk_grid_attach(GTK_GRID(grid), chap_start_entry, 1, 1, 2, 1);
+
+    gtk_grid_attach(GTK_GRID(grid), chap_end_label, 0, 2, 1, 1);
+    gtk_grid_attach(GTK_GRID(grid), chap_end_entry, 1, 2, 2, 1);
+
+    gtk_grid_set_column_homogeneous(GTK_GRID(grid), TRUE);
+    gtk_grid_set_row_homogeneous(GTK_GRID(grid), TRUE);
+
+    gtk_container_add(GTK_CONTAINER(window), grid);
+    gtk_container_set_border_width(GTK_CONTAINER(window), 10);
+
+    gtk_widget_show_all(window);
+}
+
+
 int main(int argc, char **argv)
 {
     GtkWidget *window;
@@ -136,8 +187,8 @@ int main(int argc, char **argv)
     GtkWidget *scrollWindow;
     GtkWidget *box, *content_box;
     GtkWidget *label;
-    GtkWidget *header;
     GtkWidget *quit_button;
+    GtkWidget *download_button;
     GtkTreeSelection *select;
 
     gtk_init(&argc, &argv);
@@ -148,9 +199,9 @@ int main(int argc, char **argv)
     window = (GtkWidget *)gtk_builder_get_object(builder, "window");
     gtk_window_set_title(GTK_WINDOW(window), TITLE_TEXT);
 
-    g_signal_connect(window, "delete_event", gtk_main_quit, NULL);
-    gtk_window_set_default_size(GTK_WINDOW(window),
-                                DEFAULT_WIDTH, DEFAULT_HEIGHT);
+    g_signal_connect(window, "delete_event",
+                     G_CALLBACK(gtk_widget_destroy), NULL);
+    gtk_window_set_default_size(GTK_WINDOW(window), DEFAULT_WIDTH, DEFAULT_HEIGHT);
 
     box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
 
@@ -176,14 +227,16 @@ int main(int argc, char **argv)
     gtk_widget_set_size_request(scrollWindow, MIN_PDF_WIDTH, MIN_PDF_HEIGHT);
     gtk_box_pack_start(GTK_BOX(box), scrollWindow, TRUE, TRUE, 0);
 
-    header = (GtkWidget *)gtk_builder_get_object(builder, "header");
-    quit_button = gtk_button_new_with_label("Quit");
+    quit_button = (GtkWidget *)gtk_builder_get_object(builder, "quit_button");
     g_signal_connect(quit_button, "clicked",
                      G_CALLBACK(gtk_main_quit), NULL);
-    gtk_header_bar_pack_end(GTK_HEADER_BAR(header), quit_button);
 
     content_box = (GtkWidget *)gtk_builder_get_object(builder, "content_box");
     gtk_box_pack_start(GTK_BOX(content_box), box, TRUE, TRUE, 0);
+
+    download_button = (GtkWidget *)gtk_builder_get_object(builder, "download_button");
+    g_signal_connect(download_button, "clicked",
+                     G_CALLBACK(download_dialog), window);
 
     gtk_widget_show_all(window);
 
