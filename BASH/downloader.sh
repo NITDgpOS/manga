@@ -58,7 +58,7 @@ for chap in $(seq $chaps $chape);
 do
 	mkdir $chap
 	cd $chap
-	wget -O index.html -o log.txt www.mangareader.net/$manga/$chap
+	wget -O index.html -q www.mangareader.net/$manga/$chap
 	if grep -q "not released yet" index.html; then
 		echo "Chapter $chap of $manga  is not available at www.mangareader.net"
 		cd ..
@@ -70,7 +70,7 @@ do
 	while true  #an infinte while loop 
 	do
 		echo "Downloading page $i of chapter $chap....."
-		wget -o log.txt -O $i.html -c www.mangareader.net/$manga/$chap/$i # Downloads the main webpage
+		wget -q -O $i.html -c www.mangareader.net/$manga/$chap/$i # Downloads the main webpage
 		grep 'src=\"http' $i.html | grep 'mangareader' > jump.txt # Gets the list of image links
 		link=$(head -n 1 jump.txt)
 		starti=$(index $link "11q")
@@ -87,7 +87,7 @@ do
 			break
 		fi
 		imagename=0000$i
-		wget -O ${imagename: -4}.jpg -o log.txt -c $image
+		wget -O ${imagename: -4}.jpg -q -c $image
 		i=i+1
 	done
 	echo "Converting to pdf..."
