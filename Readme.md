@@ -19,16 +19,16 @@ Usage
 =====
 
 All are bash commands, `bash <filename>` to run the particular script.
- * `downloader.sh`
+  * `downloader.sh`
   * Downloads the manga chapters in the range given.
   * -t,--title : To specify manga title name in command line
   * -c, --chsp : To specify start and end chapter
- * `fav.sh`
+  * `fav.sh`
   * Stores favourites to a file.
- * `newsteller.sh`
+  * `newsteller.sh`
   * Displays the newly added manga chapters.
   * -f : Displays the status of the favourite manga
- * `page.sh`
+  * `page.sh`
   * Opens the main page in chrome browser.
   * -f : To open in firefox browser
 
