@@ -1,30 +1,30 @@
 # Gets the index of i-th double quotes(")
-index()
-{
+index(){
 	echo "$(echo $@ | grep -aob '"' | grep -oE '[0-9]+' | sed "${!#};d")"
 }
 
-sizeOfArguments = "$#"
+sizeOfArguments="$#"
 
-# checking position of chapter or title argument
-declare -i titleIndex = 0, chapterIndex = 0
-for (( i=1; i<=sizeOfArguments; i++))
+#Checking position of chapter or title argument
+
+declare -i titleIndex=0,chapterIndex=0
+for((i=1; i<=sizeOfArguments; i++))
 do
-	if [ "${!i}" = "--title" ] || [ "${!i}" = "-t" ]; then
-		titleIndex = $i
+	if [ "${!i}"="--title" ] || [ "${!i}"="-t" ]; then
+		titleIndex=$i
 	fi
-	if [ "${!i}" = "--chap" ] || [ "${!i}" = "-c" ]; then
-		chapterIndex = $i
+	if [ "${!i}"="--chap" ] || [ "${!i}"="-c" ]; then
+		chapterIndex=$i
 	fi
 done
 
 # Get values of manga name, start Index and end Index
 if [ "$titleIndex" -ne 0 ]; then
-	declare -i endTitleArgument = 0
+	declare -i endTitleArgument=0
 	if [ "$chapterIndex" -gt "$titleIndex" ]; then
-		endTitleArgument = c-1
+		endTitleArgument=c-1
 	else
-		endTitleArgument = a
+		endTitleArgument=a
 	fi
 	for (( i=t+1;i<=endTitleArgument;i++ ))
 	do
@@ -33,17 +33,17 @@ if [ "$titleIndex" -ne 0 ]; then
 	done
 	manga=${manga::-1} #removing terminal '-'
 else
-	echo "Enter Manga name:"
+	echo -n "Enter Manga name: "
 	read manga
 	manga=${manga,,} # Converting it to lower case
 	manga=${manga// /-} #Removing spaces and adding '-'
 fi
 
 # Get start and end chapter index
-declare -i chapStart = 0, chapEnd = 0, d1 = 0, d2 = 0
-if [ "$c" -ne 0 ]; then
-	d1=$((c+1))
-	d2=$((c+2))
+declare -i chapStart=0,chapEnd=0,d1=0,d2=0
+if [ "$chapterIndex" -ne "0" ]; then
+	d1=$((chapterIndex+1))
+	d2=$((chapterIndex+2))
 	chapStart=${!d1}
 	chapEnd=${!d2}
 else
@@ -104,7 +104,7 @@ do
 		fi
 		imagename=0000$i
 		wget -O ${imagename: -4}.jpg -q -c $image
-		pageNumber = pageNumber + 1
+		pageNumber=$((pageNumber+1))
 	done
 	echo "Converting to pdf..."
 	chapno=0000$chap # Fit the chapter number into 4 digits
