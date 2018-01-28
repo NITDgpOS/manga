@@ -1,5 +1,6 @@
 # Gets the index of i-th double quotes(")
-index(){
+index()
+{
 	echo "$(echo $@ | grep -aob '"' | grep -oE '[0-9]+' | sed "${!#};d")"
 }
 
