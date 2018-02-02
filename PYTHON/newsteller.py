@@ -29,21 +29,20 @@ def get_status(manga_name, url):
         chap_name = data[0].get_text().strip()
         chap_date = data[1].get_text().strip()
         result = chap_name.ljust(80) + chap_date
-        print result
+        print (result)
 
     else:
-        print "No releases for "+manga_name.strip()+" found !"
+        print ("No releases for "+manga_name.strip()+" found !")
 
 if __name__ == "__main__":
     if '-f' in sys.argv:
         try:
-            print "Fetching the status of your favourite mangas...\n"
+            print ("Fetching the status of your favourite mangas...\n")
             with open('.fav') as f:
                 mangas = f.readlines()  # Make a list of favourite mangas
             f.close()  # closes the file
-            result_format = "Title with latest chapter".ljust(
-                80) + "Date of release (MM/DD/YYYY)\n"
-            print result_format
+            result_format = "Title with latest chapter".ljust(80) + "Date of release (MM/DD/YYYY)\n"
+            print (result_format)
             for manga in mangas:  # Iterating each favourite manga
                 manga_name = manga
                 manga = manga.strip()  # Remove extra whitespaces from the start and end of the string
@@ -53,11 +52,11 @@ if __name__ == "__main__":
                 url = "http://www.mangareader.net/"+manga
                 get_status(manga_name, url)
         except:
-            print "No favourites added yet !"
+            print ("No favourites added yet !")
 
     else:
         soup = make_soup("http://www.mangareader.net")
         # this makes a list of bs4 element tags
         mangas = soup.select('.chaptersrec')
         for i in range(0, len(mangas)):
-            print mangas[i].get_text()
+            print (mangas[i].get_text())

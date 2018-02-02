@@ -32,7 +32,7 @@ if __name__ == "__main__":
     manga = manga.lower()  # Change the manga name into lowercase
     # Replace the whitespaces with a hyphen (-)
     manga = manga.replace(' ', '-')
-    print "Enter the chapter range :"
+    print ("Enter the chapter range :")
     chaps = input("Start : ")
     chape = input("End : ")
     dest = "Downloads"
@@ -46,7 +46,7 @@ if __name__ == "__main__":
         html = get_html(url)  # HTML page of the url
 
         if "not released yet" in html:  # Checks for this string
-            print "Chapter "+str(chap)+" of "+manga+" is not available at www.mangareader.net"
+            print ("Chapter "+str(chap)+" of "+manga+" is not available at www.mangareader.net")
             os.chdir("..")  # Goes one directory ahead
             shutil.rmtree(str(chap))
             break
@@ -54,7 +54,7 @@ if __name__ == "__main__":
         i = 1
         while True:  # an infinte while loop
             try:
-                print "Downloading page "+str(i)+" of chapter "+str(chap)+"....."
+                print ("Downloading page "+str(i)+" of chapter "+str(chap)+".....")
                 url = "http://www.mangareader.net/" + \
                     manga+"/"+str(chap)+"/"+str(i)
                 html = get_html(url)  # HTML page of the url
@@ -71,7 +71,7 @@ if __name__ == "__main__":
             except:
                 break
 
-        print "Converting to pdf..."
+        print ("Converting to pdf...")
         chapno = "0000"+str(chap)
         chapno = chapno[len(chapno) - 4:]
         pdf_name = "chap"+chapno+".pdf"
@@ -79,7 +79,7 @@ if __name__ == "__main__":
         os.system(pdf_command)
         print "Cleaning up....."
         path = os.getcwd()
-        print "Your downloaded file is in this path:\n"+path
+        print ("Your downloaded file is in this path:\n"+path)
         os.chdir("..")
         open_command = "gnome-open "+pdf_name
         os.system(open_command)
