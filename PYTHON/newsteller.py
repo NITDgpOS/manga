@@ -29,21 +29,36 @@ def get_status(manga_name, url):
         chap_name = data[0].get_text().strip()
         chap_date = data[1].get_text().strip()
         result = chap_name.ljust(80) + chap_date
+<<<<<<< HEAD
+        print (result)
+
+    else:
+        print ("No releases for "+manga_name.strip()+" found !")
+=======
         print result
 
     else:
         print "No releases for "+manga_name.strip()+" found !"
+>>>>>>> a91e55a3c74fba8c6c6bbe5a1065e4d6ceaa0788
 
 if __name__ == "__main__":
     if '-f' in sys.argv:
         try:
+<<<<<<< HEAD
+            print ("Fetching the status of your favourite mangas...\n")
+=======
             print "Fetching the status of your favourite mangas...\n"
+>>>>>>> a91e55a3c74fba8c6c6bbe5a1065e4d6ceaa0788
             with open('.fav') as f:
                 mangas = f.readlines()  # Make a list of favourite mangas
             f.close()  # closes the file
             result_format = "Title with latest chapter".ljust(
                 80) + "Date of release (MM/DD/YYYY)\n"
+<<<<<<< HEAD
+            print (result_format)
+=======
             print result_format
+>>>>>>> a91e55a3c74fba8c6c6bbe5a1065e4d6ceaa0788
             for manga in mangas:  # Iterating each favourite manga
                 manga_name = manga
                 manga = manga.strip()  # Remove extra whitespaces from the start and end of the string
@@ -53,11 +68,19 @@ if __name__ == "__main__":
                 url = "http://www.mangareader.net/"+manga
                 get_status(manga_name, url)
         except:
+<<<<<<< HEAD
+            print ("No favourites added yet !")
+=======
             print "No favourites added yet !"
+>>>>>>> a91e55a3c74fba8c6c6bbe5a1065e4d6ceaa0788
 
     else:
         soup = make_soup("http://www.mangareader.net")
         # this makes a list of bs4 element tags
         mangas = soup.select('.chaptersrec')
         for i in range(0, len(mangas)):
+<<<<<<< HEAD
+            print (mangas[i].get_text())
+=======
             print mangas[i].get_text()
+>>>>>>> a91e55a3c74fba8c6c6bbe5a1065e4d6ceaa0788

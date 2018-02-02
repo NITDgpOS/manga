@@ -12,7 +12,11 @@ def cd(dir):
     Intelligently change directory
     """
     if not os.path.exists(dir):  # check for an existing path
+<<<<<<< HEAD
+        os.mkdir(dir)  # make directory if it doesn't exist
+=======
         os.mkdir(path)  # make directory if it doesn't exist
+>>>>>>> a91e55a3c74fba8c6c6bbe5a1065e4d6ceaa0788
     elif not pathlib.Path(dir).is_dir():  # else check for a clashing filename
         print("Error: A file already exists with '" + dir + "' filename")
     os.chdir(dir)
@@ -32,7 +36,11 @@ if __name__ == "__main__":
     manga = manga.lower()  # Change the manga name into lowercase
     # Replace the whitespaces with a hyphen (-)
     manga = manga.replace(' ', '-')
+<<<<<<< HEAD
+    print ("Enter the chapter range :")
+=======
     print "Enter the chapter range :"
+>>>>>>> a91e55a3c74fba8c6c6bbe5a1065e4d6ceaa0788
     chaps = input("Start : ")
     chape = input("End : ")
     dest = "Downloads"
@@ -46,7 +54,11 @@ if __name__ == "__main__":
         html = get_html(url)  # HTML page of the url
 
         if "not released yet" in html:  # Checks for this string
+<<<<<<< HEAD
+            print ("Chapter "+str(chap)+" of "+manga+" is not available at www.mangareader.net")
+=======
             print "Chapter "+str(chap)+" of "+manga+" is not available at www.mangareader.net"
+>>>>>>> a91e55a3c74fba8c6c6bbe5a1065e4d6ceaa0788
             os.chdir("..")  # Goes one directory ahead
             shutil.rmtree(str(chap))
             break
@@ -54,7 +66,11 @@ if __name__ == "__main__":
         i = 1
         while True:  # an infinte while loop
             try:
+<<<<<<< HEAD
+                print ("Downloading page "+str(i)+" of chapter "+str(chap)+".....")
+=======
                 print "Downloading page "+str(i)+" of chapter "+str(chap)+"....."
+>>>>>>> a91e55a3c74fba8c6c6bbe5a1065e4d6ceaa0788
                 url = "http://www.mangareader.net/" + \
                     manga+"/"+str(chap)+"/"+str(i)
                 html = get_html(url)  # HTML page of the url
@@ -71,15 +87,25 @@ if __name__ == "__main__":
             except:
                 break
 
+<<<<<<< HEAD
+        print ("Converting to pdf...")
+=======
         print "Converting to pdf..."
+>>>>>>> a91e55a3c74fba8c6c6bbe5a1065e4d6ceaa0788
         chapno = "0000"+str(chap)
         chapno = chapno[len(chapno) - 4:]
         pdf_name = "chap"+chapno+".pdf"
         pdf_command = "convert *.jpg ../"+pdf_name
         os.system(pdf_command)
+<<<<<<< HEAD
+        print ("Cleaning up.....")
+        path = os.getcwd()
+        print ("Your downloaded file is in this path:\n"+path)
+=======
         print "Cleaning up....."
         path = os.getcwd()
         print "Your downloaded file is in this path:\n"+path
+>>>>>>> a91e55a3c74fba8c6c6bbe5a1065e4d6ceaa0788
         os.chdir("..")
         open_command = "gnome-open "+pdf_name
         os.system(open_command)
