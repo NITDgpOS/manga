@@ -21,7 +21,7 @@ def check(manga):
         print ("Manga name you entered is not valid")
     else:
         try:
-            f_r = open('.fav', 'r')
+            f_r = open('.fav', 'a')
             favs = f_r.readlines()  # Make a list of favourite mangas
             if manga+"\n" in favs:
                 print ("Already added to favourites")
