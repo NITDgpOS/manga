@@ -12,7 +12,7 @@ def cd(dir):
     Intelligently change directory
     """
     if not os.path.exists(dir):  # check for an existing path
-        os.mkdir(path)  # make directory if it doesn't exist
+        os.mkdir(dir)  # make directory if it doesn't exist
     elif not pathlib.Path(dir).is_dir():  # else check for a clashing filename
         print("Error: A file already exists with '" + dir + "' filename")
     os.chdir(dir)
