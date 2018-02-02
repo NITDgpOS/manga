@@ -18,13 +18,13 @@ def check(manga):
     html = get_html(url)  # HTML page of the url
 
     if "404 Not Found" in html:  # Checks for this string
-        print "Manga name you entered is not valid"
+        print ("Manga name you entered is not valid")
     else:
         try:
-            f_r = open('.fav', 'r')
+            f_r = open('.fav', 'a')
             favs = f_r.readlines()  # Make a list of favourite mangas
             if manga+"\n" in favs:
-                print "Already added to favourites"
+                print ("Already added to favourites")
                 f_r.close()  # Closes the file 'f_r'
         except:
             f_a = open('.fav', 'a')  # Open .fav in append mode
@@ -45,5 +45,5 @@ if __name__ == "__main__":
         elif choice == 'N' or choice == 'n':
             break
         else:
-            print "Invalid choice. Try again!"
+            print ("Invalid choice. Try again!")
     os.system("sort -u -o .fav .fav")
