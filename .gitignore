@@ -1,0 +1,11 @@
+.fav
+index.html
+jump.txt
+Downloads/
+*~
+\#*
+gui
+*.o
+*.exe
+*.gch
+*core.*
