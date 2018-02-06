@@ -20,16 +20,13 @@ def check(manga):
     if "404 Not Found" in html:  # Checks for this string
         print "Manga name you entered is not valid"
     else:
-        try:
-            f_r = open('.fav', 'r')
-            favs = f_r.readlines()  # Make a list of favourite mangas
-            if manga+"\n" in favs:
-                print "Already added to favourites"
-                f_r.close()  # Closes the file 'f_r'
-        except:
-            f_a = open('.fav', 'a')  # Open .fav in append mode
-            f_a.write(manga+"\n")  # Write the manga into the .fav
-            f_a.close()  # Closes the file 'f_a'
+        with open(".fav", "r+") as file:
+            for line in file:
+                if manga in line:
+                    print ("Already added to favourites")
+                    break
+            else: # not found, we are at the eof
+                file.write(manga + '\n') # append missing data
 
 
 if __name__ == "__main__":
