@@ -1,19 +1,7 @@
 Manga Downloader
 ================
 
-A bash script to download the manga chapters of your choice from mangareader and convert them to pdf format to read for later.
-
-Structure
-=========
-
-- BashC
- - downloader, fav, newsteller, page : Scripts written in BASH
- - Cgui: Contains GTK gui implementation
-
-- Python
- - downloader, fav, newsteller, page: Scripts written in Python
-
-- Downloads : Folder with all downloaded content
+A bash script to download the manga chapters of your choice and convert them to pdf format to read for later.
 
 Usage
 =====

@@ -1,17 +1,16 @@
 check () {
-  mangaName = $1
-  mangaName = ${m,,} # Converting it to lower case
-  mangaName = ${m// /-} # Removing spaces and adding - in their places
-  if curl -s --head http://www.mangareader.net/$mangaName | grep "200 OK" > /dev/null
+  m=$1
+  m=${m,,} # Converting it to lower case
+  m=${m// /-} # Removing spaces and adding - in their places
+  if curl -s --head http://www.mangareader.net/$m | grep "200 OK" > /dev/null
   then
-    echo $mangaName >> .fav
-    echo "Manga added to fav list"
+    echo $m >> .fav
   else
     echo "Manga name you entered is not valid"
   fi
 }
 
-echo "Enter the name of the manga to add to fav. list: "
+echo "Enter the name of the manga to add to fav. list"
 read manga
 check "$manga"
 while true

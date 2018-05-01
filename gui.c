@@ -5,7 +5,7 @@
 
 #define TITLE_TEXT      "Manga GUI"
 
-#define DOWNLOADS_PATH  "../,,/Downloads/"
+#define DOWNLOADS_PATH  "./Downloads/"
 
 #define DEFAULT_WIDTH   1024
 #define DEFAULT_HEIGHT  680
