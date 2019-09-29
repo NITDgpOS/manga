@@ -5,8 +5,6 @@
 
 #define TITLE_TEXT      "Manga GUI"
 
-#define DOWNLOADS_PATH  "./Downloads/"
-
 #define DEFAULT_WIDTH   1024
 #define DEFAULT_HEIGHT  680
 
@@ -28,6 +26,7 @@ enum
 
 GtkBuilder *builder;
 
+char *DOWNLOADS_PATH = "/home/invaliduser/Downloads/";
 
 static void manga_tree_selection_changed(GtkTreeSelection *selection, gpointer data)
 {
@@ -50,47 +49,52 @@ static GtkTreeModel *create_and_fill_manga_tree()
 {
     GtkTreeStore  *treestore;
     GtkTreeIter    toplevel, child;
-    gchar        **manga_file_list;
-    gchar        **chap_file_list;
     gchar          manga_name[4096];
-    gint           i, j;
+    const GSList  *manga_file_list;
+    const GSList  *chap_file_list;
+    const gchar   *exts[] = { "pdf", NULL };
 
     treestore = gtk_tree_store_new(NUM_COLS, G_TYPE_STRING, G_TYPE_STRING);
 
     /* Getting manga file names */
-    get_file_names_in_dir(DOWNLOADS_PATH, (char ***)&manga_file_list);
+    manga_file_list = get_file_names_in_dir(DOWNLOADS_PATH, NULL, 1);
 
-    /* Iterating through all mangas */
-    for (i = 0; manga_file_list[i]; ++i)
-    {
-        gtk_tree_store_append(treestore, &toplevel, NULL);
-        gtk_tree_store_set(treestore, &toplevel,
-                           MANGA_NAME, manga_file_list[i],
-                           MANGA_PATH, NULL, -1);
-
-        /* Concatinating the manga name to the directory */
-        strcpy(manga_name, DOWNLOADS_PATH);
-        strcat(manga_name, manga_file_list[i]);
-
-        /* Getting chapters of a manga */
-        get_file_names_in_dir(manga_name, (char ***)&chap_file_list);
-
-        /* Storing all manga chapters in tree model */
-        for (j = 0; chap_file_list[j]; ++j)
-        {
-            gtk_tree_store_append(treestore, &child, &toplevel);
-            gtk_tree_store_set(treestore, &child,
-                               MANGA_NAME, chap_file_list[j],
-                               MANGA_PATH, get_path((char *)chap_file_list[j]),
-                               -1);
-        }
-
-        /* Freeing the chapter file names */
-        free_file_list((char ***)&chap_file_list);
+    if (manga_file_list == NULL) {
+        exit(1);
     }
 
-    /* Freeing manga file names */
-    free_file_list((char ***)&manga_file_list);
+    /* Iterating through all mangas */
+    for (const GSList *i = manga_file_list; i != NULL; i = i->next)
+    {
+        /* Concatinating the manga name to the directory */
+        strcpy(manga_name, DOWNLOADS_PATH);
+        strcat(manga_name, i->data);
+
+        if (!g_file_isdir(manga_name)) continue;
+
+        gtk_tree_store_append(treestore, &toplevel, NULL);
+        gtk_tree_store_set(treestore, &toplevel,
+                           MANGA_NAME, i->data,
+                           MANGA_PATH, NULL, -1);
+
+        /* Getting chapters of a manga */
+        chap_file_list = get_file_names_in_dir(manga_name, exts, 1);
+
+        /* Storing all manga chapters in tree model */
+        for (const GSList *j = chap_file_list; j != NULL; j = j->next)
+        {
+            if (g_file_isdir(j->data)) continue;
+            char chap_path[4096];
+            strcpy(chap_path, manga_name);
+            strcat(chap_path, j->data);
+            const char *path = realpath(chap_path, NULL);
+            gtk_tree_store_append(treestore, &child, &toplevel);
+            gtk_tree_store_set(treestore, &child,
+                               MANGA_NAME, j->data,
+                               MANGA_PATH, path,
+                               -1);
+        }
+    }
 
     /* Return the tree model data */
     return GTK_TREE_MODEL(treestore);
@@ -190,6 +194,10 @@ int main(int argc, char **argv)
     GtkWidget *quit_button;
     GtkWidget *download_button;
     GtkTreeSelection *select;
+
+    if (argc > 1) {
+        DOWNLOADS_PATH = argv[1];
+    }
 
     gtk_init(&argc, &argv);
 
