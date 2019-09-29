@@ -1,162 +1,87 @@
-//#define PORTABLE
+#include <glib.h>
+#include <glib/gprintf.h>
+#include <gmodule.h>
+#include <errno.h>
 
-#ifndef PORTABLE
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <unistd.h>
-#include <dirent.h>
-#endif
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <malloc.h>
-#include <string.h>
-
-#include "lib.h"
-
-#define SWAP(a, b, type)  {                     \
-        type c = a;                             \
-        a = b, b = c;                           \
-    }
-
-char* get_path(const char *file)
-{
-    FILE *fp;
-    char cmd[5000];
-    char result[4096];
-    char *path;
-    int len;
-
-    sprintf(cmd, "readlink -f '%s'", file);
-
-    fp = popen(cmd, "r");
-
-    if (fp == NULL)
-    {
-        printf("Failed to run command %s\n", cmd);
-        exit(1);
-    }
-
-    fgets(result, 4095, fp);
-
-    len = strlen(result);
-
-    result[len - 1] = '\0';
-
-    path = (char *)malloc(len);
-    strcpy(path, result);
-
-    return path;
+// Sort helper function to sort filenames in ascending order
+gint compare_filenames(gconstpointer a, gconstpointer b) {
+  return strcasecmp((const char *)a, (const char *)b);
 }
 
 
-int get_file_names_in_dir(const char *dir, char ***list)
-{
-    FILE *fp;
-    int files_in_dir, i = 0;
-    char result[4096];
-    char cmd[5000];
-
-    sprintf(cmd, "ls -l '%s' | wc -l", dir);
-
-    fp = popen(cmd, "r");
-    if (fp == NULL)
-    {
-        printf("Failed to run command %s\n", cmd);
-        exit(1);
-    }
-
-    fgets(result, sizeof(result) - 1, fp);
-    files_in_dir = atol(result) - 1;
-
-    pclose(fp);
-
-    *list = (char **)malloc((files_in_dir + 1) * sizeof(char **));
-
-#ifdef PORTABLE
-    int j = 0, ch;
-
-    sprintf(cmd,
-            "ls -l '%s' | sed -e '1d' | "
-            "awk '{$1=$2=$3=$4=$5=$6=$7=$8=\"\"; print $0}' | "
-            "sed -e 's/^ \\{1,\\}//'", dir);
-
-    fp = popen(cmd, "r");
-
-    if (fp == NULL)
-    {
-        printf("Failed to run command %s\n", cmd);
-        exit(1);
-    }
-
-    while (i < files_in_dir && !feof(fp))
-    {
-        ch = fgetc(fp);
-        if (ch < 32 || ch > 126)
-        {
-            if (j != 0)
-            {
-                result[j] = '\0';
-                (*list)[i] = (char *)malloc(j + 1);
-                strcpy((*list)[i], result);
-                j = 0;
-                ++i;
-            }
-            continue;
-        }
-        result[j] = ch;
-        ++j;
-    }
-
-    pclose(fp);
-
-    (*list)[i] = NULL;
-
-#else
-
-    DIR *mydir;
-    struct dirent *myfile;
-    mydir = opendir(dir);
-    while ((myfile = readdir(mydir)) != NULL)
-    {
-        if (myfile->d_name[0] != '.')
-        {
-            (*list)[i] = (char *)malloc(strlen(myfile->d_name) + 1);
-            strcpy((*list)[i], myfile->d_name);
-            ++i;
-        }
-    }
-    closedir(mydir);
-
-    (*list)[i] = NULL;
-
-    sort_file_names(*list);
-
-#endif
-
-    return files_in_dir;
+// Returns true if filename is a dotfile i.e. filename has a leading dot
+int check_hidden(const gchar *filename) {
+  return filename != NULL && filename[0] == '.';
 }
 
-void free_file_list(char ***list)
-{
-    int i = 0;
-    while ((*list)[i])
-        free((*list)[i++]);
-    free(*list);
+
+// Returns true if filename matches any one of the extensions.
+int check_extension(const gchar *filename, const gchar **extensions) {
+  const gsize filename_len = strlen(filename);
+  while (*extensions != NULL) {
+    const gchar *ext = *extensions;
+    const gsize ext_len = strlen(ext);
+    if (ext_len == 0) {
+      return 0;
+    }
+    gsize i = filename_len - 1;
+    int f = 1;
+    while (i > 0 && filename[i] != '.') {
+      if (filename[i] != ext[ext_len - (filename_len - i)]) {
+        f = 0;
+        break;
+      }
+      i--;
+    }
+    if (i != 0 && f == 1) {
+      return 1;
+    }
+    extensions++;
+  }
+  return 0;
 }
 
-void sort_file_names(char **file_list)
-{
-    size_t i;
 
-    for (i = 0; file_list[i + 1]; ++i)
-    {
-        size_t j = i;
-        while (strcasecmp(file_list[j + 1], file_list[j]) < 0)
-        {
-            SWAP(file_list[j + 1], file_list[j], char *);
-            if (j-- == 0)
-                break;
-        }
+// Returns true if filename is a directory
+gboolean g_file_isdir(const gchar *filename) {
+  GFileTest test = G_FILE_TEST_IS_DIR;
+  return g_file_test(filename, test);
+}
+
+
+// Returns a singly linked list of file names in the given directory.
+//   dir_name: The name of the directory in the file system
+//   extensions: Array of extensions to filter without the leading dot
+//   skip_hidden: Skip hidden files if non-zero
+// Returns NULL if directory specified in dir_name was not found.
+GSList * get_file_names_in_dir(const gchar *dir_name,
+                               const gchar **extensions,
+                               gint skip_hidden) {
+  GDir *dir;
+  GError *error = NULL;
+  const gchar *filename;
+  GSList *filenames = NULL;
+
+  dir = g_dir_open(dir_name, 0, &error);
+  if (dir == NULL) {
+    g_fprintf(stderr, "%s\n", error->message);
+    g_error_free(error);
+    return NULL;
+  }
+
+  // Get each file name from the directory
+  while ((filename = g_dir_read_name(dir))) {
+    // Skip hidden files and extensions that don't match
+    if ((skip_hidden != 0 && check_hidden(filename)) ||
+        (extensions != NULL && !check_extension(filename, extensions))) {
+      continue;
     }
+    filenames = g_slist_append (filenames, (gpointer)filename);
+  }
+
+  // Sort the filenames in ascending order
+  filenames = g_slist_sort(filenames, compare_filenames);
+
+  return filenames;
 }
